@@ -1,85 +1,65 @@
-// DOM Elements
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const bookResults = document.getElementById('bookResults');
-const libraryShelves = document.getElementById('libraryShelves');
-
-// Load library from localStorage
-let myLibrary = JSON.parse(localStorage.getItem('myLibrary')) || [];
-
-// Fetch books from Google Books API
-async function fetchBooks(query) {
-    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-    const data = await response.json();
-    return data.items || [];
+const sI = document.getElementById('searchInput');
+const sB = document.getElementById('searchBtn');
+const bR = document.getElementById('bookResults');
+const lS = document.getElementById('libraryShelves');
+let lib = JSON.parse(localStorage.getItem('lib')) || [];
+async function fB(q) {
+    const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}`);
+    const d = await r.json();
+    return d.items || [];
 }
-
-// Display book recommendations
-function displayBooks(books) {
-    bookResults.innerHTML = books.map(book => `
-        <div class="book-card">
-            <img src="${book.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/150'}" alt="${book.volumeInfo.title}">
-            <h3>${book.volumeInfo.title}</h3>
-            <p>${book.volumeInfo.authors?.join(', ') || 'Unknown Author'}</p>
-            <button onclick="addToLibrary('${book.id}', '${book.volumeInfo.title}')">Add to Library</button>
+function dB(b) {
+    bR.innerHTML = b.map(b => `
+        <div class="bC">
+            <img src="${b.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/150'}" alt="${b.volumeInfo.title}">
+            <h3>${b.volumeInfo.title}</h3>
+            <p>${b.volumeInfo.authors?.join(', ') || 'Unknown'}</p>
+            <button onclick="aL('${b.id}', '${b.volumeInfo.title}')">Add</button>
         </div>
     `).join('');
 }
-
-// Add book to library
-function addToLibrary(bookId, title) {
-    const book = myLibrary.find(b => b.id === bookId);
-    if (!book) {
-        const newBook = { id: bookId, title, progress: 0 };
-        myLibrary.push(newBook);
-        localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
-        displayLibrary();
+function aL(id, t) {
+    const b = lib.find(b => b.id === id);
+    if (!b) {
+        lib.push({ id, t, p: 0 });
+        localStorage.setItem('lib', JSON.stringify(lib));
+        dL();
     }
 }
-
-// Delete book from library
-function deleteBook(bookId) {
-    myLibrary = myLibrary.filter(book => book.id !== bookId);
-    localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
-    displayLibrary();
+function dBk(id) {
+    lib = lib.filter(b => b.id !== id);
+    localStorage.setItem('lib', JSON.stringify(lib));
+    dL();
 }
-
-// Update reading progress
-function updateProgress(bookId) {
-    const book = myLibrary.find(b => b.id === bookId);
-    if (book) {
-        const newProgress = prompt('Enter new progress (0-100):');
-        if (newProgress >= 0 && newProgress <= 100) {
-            book.progress = newProgress;
-            localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
-            displayLibrary();
+function uP(id) {
+    const b = lib.find(b => b.id === id);
+    if (b) {
+        const p = prompt('Enter progress (0-100):');
+        if (p >= 0 && p <= 100) {
+            b.p = p;
+            localStorage.setItem('lib', JSON.stringify(lib));
+            dL();
         }
     }
 }
-
-// Display library
-function displayLibrary() {
-    libraryShelves.innerHTML = myLibrary.map(book => `
-        <div class="book-card">
-            <h3>${book.title}</h3>
-            <p><strong>ID:</strong> ${book.id}</p>
-            <p><strong>Progress:</strong> ${book.progress}%</p>
-            <div class="button-group">
-                <button class="update-btn" onclick="updateProgress('${book.id}')">Update Progress</button>
-                <button class="delete-btn" onclick="deleteBook('${book.id}')">Delete</button>
+function dL() {
+    lS.innerHTML = lib.map(b => `
+        <div class="bC">
+            <h3>${b.t}</h3>
+            <p><strong>ID:</strong> ${b.id}</p>
+            <p><strong>Progress:</strong> ${b.p}%</p>
+            <div class="bG">
+                <button class="uB" onclick="uP('${b.id}')">Update</button>
+                <button class="dB" onclick="dBk('${b.id}')">Delete</button>
             </div>
         </div>
     `).join('');
 }
-
-// Event Listeners
-searchBtn.addEventListener('click', async () => {
-    const query = searchInput.value.trim();
-    if (query) {
-        const books = await fetchBooks(query);
-        displayBooks(books);
+sB.addEventListener('click', async () => {
+    const q = sI.value.trim();
+    if (q) {
+        const b = await fB(q);
+        dB(b);
     }
 });
-
-// Initial Load
-displayLibrary();
+dL();
