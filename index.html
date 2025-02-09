@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library Organizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Book Library</h1>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search for books...">
+            <button id="searchBtn">Search</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Book Recommendations -->
+            <div class="recommendations">
+                <h2>Book Recommendations</h2>
+                <div id="bookResults" class="book-list"></div>
+            </div>
+
+            <!-- My Library -->
+            <div class="library">
+                <h2>My Library</h2>
+                <div id="libraryShelves" class="book-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
